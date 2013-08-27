@@ -13,10 +13,10 @@ class TermTranslationActions(p.SingletonPlugin):
 
     def get_actions(self):
         return {
-            'term_translations': self.term_translations
+            'term_translation_list': self.term_translation_list
         }
 
-    def term_translations(self, context, data_dict):
+    def term_translation_list(self, context, data_dict):
         '''Returns a list of all term translations
 
         :param lang_code: Filter for one language. If lang_code is empty,
@@ -26,7 +26,7 @@ class TermTranslationActions(p.SingletonPlugin):
 
         model = context['model']
 
-        lang_code = data_dict.get('lang_code')
+        lang_code = data_dict.get('lang_code', '')
 
         trans_table = model.term_translation_table
 
