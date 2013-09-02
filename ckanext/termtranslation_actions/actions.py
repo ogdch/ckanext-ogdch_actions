@@ -1,10 +1,16 @@
 from ckan import plugins as p
 
 import ckan.lib.dictization
+from ckan import logic
 
+import pylons
 import sqlalchemy
 
+from ckanext.multilingual.plugin import translate_data_dict
+
 _table_dictize = ckan.lib.dictization.table_dictize
+
+_group_list_dictize = ckan.lib.dictization.model_dictize.group_list_dictize
 
 _select = sqlalchemy.sql.select
 
@@ -13,7 +19,8 @@ class TermTranslationActions(p.SingletonPlugin):
 
     def get_actions(self):
         return {
-            'term_translation_list': self.term_translation_list
+            'term_translation_list': self.term_translation_list,
+            'group_list_translated': self.group_list_translated
         }
 
     def term_translation_list(self, context, data_dict):
@@ -44,3 +51,34 @@ class TermTranslationActions(p.SingletonPlugin):
             results.append(_table_dictize(row, context))
 
         return results
+
+    def group_list_translated(self, context, data_dict):
+        ''' Returns all groups in the specified language
+
+            :param lang: [de|en|fr|it] Language for translation
+            :param type: [group|organization] Type of group to filter
+        '''
+
+        model = context['model']
+
+        group_type = data_dict.get('type')
+        if group_type not in ('group', 'organization'):
+            raise logic.ParameterError("Invalid type")
+        is_org = group_type == 'organization'
+
+        query = model.Session.query(model.Group).join(model.GroupRevision)
+        query = query.filter(model.GroupRevision.state=='active')
+        query = query.filter(model.GroupRevision.is_organization==is_org)
+
+        orgs = query.all()
+        data = _group_list_dictize(orgs, context)
+
+        keys = ('id', 'title', 'description', 'image_url')
+        filtered = [dict((key, org[key]) for key in keys) for org in data]
+
+        lang = data_dict.get('lang', 'de')
+
+        pylons.request.environ['CKAN_LANG'] = lang
+        result = [translate_data_dict(org) for org in filtered]
+
+        return result
