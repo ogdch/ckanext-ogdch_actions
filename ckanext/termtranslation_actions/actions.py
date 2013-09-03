@@ -62,7 +62,9 @@ class TermTranslationActions(p.SingletonPlugin):
 
         model = context['model']
 
+        lang = data_dict.get('lang', 'de')
         group_type = data_dict.get('type', 'group')
+
         if group_type not in ('group', 'organization'):
             raise logic.ParameterError("Invalid type")
         is_org = group_type == 'organization'
@@ -72,12 +74,11 @@ class TermTranslationActions(p.SingletonPlugin):
         query = query.filter(model.GroupRevision.is_organization==is_org)
 
         orgs = query.all()
+
         data = _group_list_dictize(orgs, context)
 
-        keys = ('id', 'title', 'description', 'image_url')
+        keys = ('id', 'title', 'description', 'image_url', 'packages')
         filtered = [dict((key, org[key]) for key in keys) for org in data]
-
-        lang = data_dict.get('lang', 'de')
 
         pylons.request.environ['CKAN_LANG'] = lang
         result = [translate_data_dict(org) for org in filtered]
