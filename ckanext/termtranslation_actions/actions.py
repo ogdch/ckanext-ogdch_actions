@@ -56,12 +56,13 @@ class TermTranslationActions(p.SingletonPlugin):
         ''' Returns all groups in the specified language
 
             :param lang: [de|en|fr|it] Language for translation
-            :param type: [group|organization] Type of group to filter
+            :param type: [group|organization] Type of group to filter.
+                         Default is group
         '''
 
         model = context['model']
 
-        group_type = data_dict.get('type')
+        group_type = data_dict.get('type', 'group')
         if group_type not in ('group', 'organization'):
             raise logic.ParameterError("Invalid type")
         is_org = group_type == 'organization'
