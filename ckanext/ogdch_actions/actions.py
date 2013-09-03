@@ -9,12 +9,10 @@ import sqlalchemy
 from ckanext.multilingual.plugin import translate_data_dict
 
 _table_dictize = ckan.lib.dictization.table_dictize
-
 _group_list_dictize = ckan.lib.dictization.model_dictize.group_list_dictize
-
 _select = sqlalchemy.sql.select
 
-class TermTranslationActions(p.SingletonPlugin):
+class OGDActions(p.SingletonPlugin):
     p.implements(p.IActions)
 
     def get_actions(self):
@@ -87,7 +85,7 @@ class TermTranslationActions(p.SingletonPlugin):
         return result
 
     def dataset_count(self, context, data_dict):
-        ''' Return the total number of datasets '''
+        ''' Returns the total number of datasets '''
 
         model = context['model']
 
