@@ -20,7 +20,8 @@ class TermTranslationActions(p.SingletonPlugin):
     def get_actions(self):
         return {
             'term_translation_list': self.term_translation_list,
-            'group_list_translated': self.group_list_translated
+            'group_list_translated': self.group_list_translated,
+            'dataset_count': self.dataset_count,
         }
 
     def term_translation_list(self, context, data_dict):
@@ -84,3 +85,14 @@ class TermTranslationActions(p.SingletonPlugin):
         result = [translate_data_dict(org) for org in filtered]
 
         return result
+
+    def dataset_count(self, context, data_dict):
+        ''' Return the total number of datasets '''
+
+        model = context['model']
+
+        query = model.Session.query(model.Package)
+        query = query.filter(model.Package.state=='active')
+        query = query.filter(model.Package.type=='dataset')
+
+        return {'count': query.count()}
