@@ -76,7 +76,7 @@ class OGDActions(p.SingletonPlugin):
 
         data = _group_list_dictize(orgs, context)
 
-        keys = ('id', 'title', 'description', 'image_url', 'packages')
+        keys = ('id', 'name', 'title', 'description', 'image_url', 'packages')
         filtered = [dict((key, org[key]) for key in keys) for org in data]
 
         pylons.request.environ['CKAN_LANG'] = lang
