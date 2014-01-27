@@ -12,6 +12,7 @@ _table_dictize = ckan.lib.dictization.table_dictize
 _group_list_dictize = ckan.lib.dictization.model_dictize.group_list_dictize
 _select = sqlalchemy.sql.select
 
+
 class OGDActions(p.SingletonPlugin):
     p.implements(p.IActions)
 
@@ -69,8 +70,8 @@ class OGDActions(p.SingletonPlugin):
         is_org = group_type == 'organization'
 
         query = model.Session.query(model.Group).join(model.GroupRevision)
-        query = query.filter(model.GroupRevision.state=='active')
-        query = query.filter(model.GroupRevision.is_organization==is_org)
+        query = query.filter(model.GroupRevision.state == 'active')
+        query = query.filter(model.GroupRevision.is_organization == is_org)
 
         orgs = query.all()
 
@@ -90,7 +91,7 @@ class OGDActions(p.SingletonPlugin):
         model = context['model']
 
         query = model.Session.query(model.Package)
-        query = query.filter(model.Package.state=='active')
-        query = query.filter(model.Package.type=='dataset')
+        query = query.filter(model.Package.state == 'active')
+        query = query.filter(model.Package.type == 'dataset')
 
         return {'count': query.count()}
